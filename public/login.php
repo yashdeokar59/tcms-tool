@@ -2,11 +2,12 @@
 session_start();
 
 // Database connection
-$dbPath = '/var/www/html/testcase-management-tool/database/database.sqlite';
+require_once 'database.php';
 try {
-    $pdo = new PDO("sqlite:$dbPath");
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $db = getDB();
+    $pdo = $db->getConnection();
 } catch (Exception $e) {
+    error_log("Database connection failed: " . $e->getMessage());
     die("Database connection failed");
 }
 
@@ -29,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['logged_in'] = true;
             
             // Update last login
-            $stmt = $pdo->prepare("UPDATE users SET last_login_at = datetime('now') WHERE id = ?");
+            $stmt = $pdo->prepare("UPDATE users SET last_login_at = NOW() WHERE id = ?");
             $stmt->execute([$user['id']]);
             
             header('Location: index.php');

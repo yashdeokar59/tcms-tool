@@ -3,11 +3,12 @@ require_once 'auth.php';
 requireAuth();
 
 // Database connection
-$dbPath = '/var/www/html/testcase-management-tool/database/database.sqlite';
+require_once 'database.php';
 try {
-    $pdo = new PDO("sqlite:$dbPath");
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $db = getDB();
+    $pdo = $db->getConnection();
 } catch (Exception $e) {
+    error_log("Database connection failed: " . $e->getMessage());
     die("Database connection failed");
 }
 
